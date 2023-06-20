@@ -22,10 +22,16 @@ def PVS(brd, alpha, beta, depth, targetDepth):
             
             if captured.type == 'K': return 100
             
-            brd.pieces[p.team ^ 1].remove(captured)
+            #brd.pieces[p.team ^ 1].remove(captured)
+            mg, eg, gP = brd.mg.copy(), brd.eg.copy(), brd.gP
             brd.playMove(p, move)
-
+            
+            
             score = -PVS(brd, -beta, -alpha, depth+1, targetDepth)
+            
+            brd.mg = mg
+            brd.eg = eg
+            brd.gP = gP
             brd.unplayMove(p, move, fromPos, captured)
             
             if score >= beta:
@@ -37,8 +43,14 @@ def PVS(brd, alpha, beta, depth, targetDepth):
         for move in pM[1]:
             fromPos = p.index
             
+            mg, eg, gP = brd.mg.copy(), brd.eg.copy(), brd.gP
             brd.playMove(p, move)
+
             score = -PVS(brd, -beta, -alpha, depth+1, targetDepth)
+
+            brd.mg = mg
+            brd.eg = eg
+            brd.gP = gP
             brd.unplayMove(p, move, fromPos)
 
             if score >= beta:

@@ -23,11 +23,11 @@ def getMove(state, player):
         print(f"[AI] Checkmate Detected")
         exit()
 
-    print(f"[AI] Selected Move {move[0]} {t.letter[move[1]%8]}{8-move[1]//8}")
-
+    print(f"[AI] Move Raw: {move}")
+    print(f"[AI] Selected Move: {move[0]} {t.letter[move[1]%8]}{8-move[1]//8}")
     #format move according to GUI specification
     return f"{str(move[0])[2:]}{t.letter[move[1]%8]}{8-move[1]//8}"
 
-dflt = 'RNBQKBNRPPPPPPPP................................pppppppprnbqkbnr'
-
-#print(getMove(dflt, 1))
+if __name__ == '__main__':
+    dflt = 'RNBQKBNRPPPPPPPP................................pppppppprnbqkbnr'
+    print(getMove(dflt, 1))
