@@ -1,5 +1,5 @@
-from board import board
-import tables as t
+from AI.board import board
+import AI.tables as t
 
 #midgame search
 sum = [0]

@@ -1,4 +1,4 @@
-import tables as t
+import AI.tables as t
 
 class piece:
     type = None

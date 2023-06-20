@@ -1,4 +1,4 @@
-from board import board
+from AI.board import board
 
 def testFindMoves():
     f = open("tests/findMoves.txt").readlines()

@@ -1,5 +1,5 @@
 import tkinter as tk
-from chess_imports import possible_moves, make_move
+from ChessGUI.chess_imports import possible_moves, make_move
 pastMoves = set()
 pieceMoving = ""
 
@@ -12,18 +12,18 @@ def update_board(board, allPieces, canvas, root, theMovesPossible):
     return configure_board(board, canvas, root,  theMovesPossible, moveMade)
 
 def configure_board(board, canvas, root, everyMove, moveMade):
-    blackPawn = tk.PhotoImage(file = "blackPawn.png")
-    blackKing = tk.PhotoImage(file = "blackKing.png")
-    blackQueen = tk.PhotoImage(file = "blackQueen.png")
-    blackKnight = tk.PhotoImage(file = "blackKnight.png")
-    blackBishop = tk.PhotoImage(file = "blackBishop.png")
-    blackRook = tk.PhotoImage(file = "blackRook.png")
-    whitePawn = tk.PhotoImage(file = "whitePawn.png")
-    whiteKing = tk.PhotoImage(file = "whiteKing.png")
-    whiteQueen = tk.PhotoImage(file = "whiteQueen.png")
-    whiteKnight = tk.PhotoImage(file = "whiteKnight.png")
-    whiteBishop = tk.PhotoImage(file = "whiteBishop.png")
-    whiteRook = tk.PhotoImage(file = "whiteRook.png")
+    blackPawn = tk.PhotoImage(file = "ChessGUI/blackPawn.png")
+    blackKing = tk.PhotoImage(file = "ChessGUI/blackKing.png")
+    blackQueen = tk.PhotoImage(file = "ChessGUI/blackQueen.png")
+    blackKnight = tk.PhotoImage(file = "ChessGUI/blackKnight.png")
+    blackBishop = tk.PhotoImage(file = "ChessGUI/blackBishop.png")
+    blackRook = tk.PhotoImage(file = "ChessGUI/blackRook.png")
+    whitePawn = tk.PhotoImage(file = "ChessGUI/whitePawn.png")
+    whiteKing = tk.PhotoImage(file = "ChessGUI/whiteKing.png")
+    whiteQueen = tk.PhotoImage(file = "ChessGUI/whiteQueen.png")
+    whiteKnight = tk.PhotoImage(file = "ChessGUI/whiteKnight.png")
+    whiteBishop = tk.PhotoImage(file = "ChessGUI/whiteBishop.png")
+    whiteRook = tk.PhotoImage(file = "ChessGUI/whiteRook.png")
     allPieces = set()
     for i in range(0, 64, 8):
         for j in range(8):

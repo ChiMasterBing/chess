@@ -1,5 +1,5 @@
-from piece import piece
-import tables as t
+from AI.piece import piece
+import AI.tables as t
 #use rudimentry methods - could be optimized for bitboards later
 class board:
     state = 'RNBQKBNRPPPPPPPP................................pppppppprnbqkbnr'

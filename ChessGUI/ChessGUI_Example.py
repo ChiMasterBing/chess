@@ -1,6 +1,7 @@
-from BoardGUI import configure_board, update_board, get_player_move
-from chess_imports import possible_moves, make_move, print_board, kingNotInCheck
+from ChessGUI.BoardGUI import configure_board, update_board, get_player_move
+from ChessGUI.chess_imports import possible_moves, make_move, print_board, kingNotInCheck
 import tkinter as tk
+import AI.play as bot
 root = tk.Tk()
 
 board = "RNBQKBNRPPPPPPPP................................pppppppprnbqkbnr"
@@ -74,7 +75,19 @@ def run_game(players):
             return win, move_tracker, board_state_tracker
         print("Next player:", players[turn], "playing as", "WB"[turn])
         print("Available moves are:", options)
-        move = get_player_move(board, canvas, root)
+        #---------------------------------------------
+        
+        
+        if players[turn] == 'USER':
+            move = get_player_move(board, canvas, root)
+        elif players[turn] == 'AI':
+            move = bot.getMove(board, turn ^ 1)
+        else:
+            print("Invalid Move"); exit()
+        
+        
+
+        #---------------------------------------------
         if len(move) == 5:
             if "WB"[turn] == "W":
                 move = move[:4] + "Q"
@@ -89,7 +102,7 @@ def run_game(players):
         move_tracker.append(move)
         board_state_tracker.append(board)
 
-victor, moves, boards = run_game(players)
-print()
-print("All moves in order:", moves)
-root.mainloop()
+# victor, moves, boards = run_game(players)
+# print()
+# print("All moves in order:", moves)
+# root.mainloop()
