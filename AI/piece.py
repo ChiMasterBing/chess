@@ -11,6 +11,7 @@ class piece:
         self.type, self.index, self.symbol = type.upper(), i, type
         self.team = 1 if type >= 'a' else 0
         self.hash = t.names[self.type] + self.index * 10
+    
     def __hash__(self):
         return self.hash
 
@@ -23,7 +24,6 @@ class piece:
     def move(self, move): #DOES NOT UPDATE ITS MOVES
         #assert move in self.moves[0] or move in self.moves[1], move
         self.index = move
-        #print("set index as", self.index)
 
     def unmove(self, fromPos):
         self.index = fromPos

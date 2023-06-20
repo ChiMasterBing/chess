@@ -5,14 +5,8 @@ import tables as t
 sum = [0]
 
 def PVS(brd, alpha, beta, depth, targetDepth):
-    # if (brd.state, brd.player) in TRANSPOSE:
-    #     return TRANSPOSE[(brd.state, brd.player)]
-
     if depth == targetDepth:  
         score = brd.evaluate()
-        #TRANSPOSE[(brd.state, brd.player)] = score
-        # if score == 1:
-        #     print(brd.p2d())
         sum[0] += 1
         return score
     
@@ -55,7 +49,6 @@ def PVS(brd, alpha, beta, depth, targetDepth):
     
     if depth == 0:
         print(alpha)
-    #TRANSPOSE[(brd.state, brd.player)] = alpha
     return alpha if depth != 0 else bestMove
 
 
@@ -73,7 +66,7 @@ if __name__== "__main__":
     while True:
         brd = board(brd.state)
         print("player:", brd.player)
-        tpl = PVS(brd, -999, 999, 0, 5)
+        tpl = PVS(brd, -999, 999, 0, 6)
         
         if not tpl:
             print("Checkmate"); exit()
@@ -83,6 +76,7 @@ if __name__== "__main__":
 
         brd.playMove(tpl[0], tpl[1])
         print(brd.p2d())
+        exit()
         #print(brd.state)
 
         move = input().split(" ")
@@ -96,4 +90,4 @@ if __name__== "__main__":
         
         print(brd.p2d())
         print(brd.state)
-
+        

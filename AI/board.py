@@ -9,7 +9,7 @@ class board:
     #initialize the board, default position given
     def __init__(self, s = state, p = 1):
         self.pieces = [set(), set()]
-        self.state = s
+        self.state = [*s]
         self.player = p
         self.setPieces()
     
@@ -22,57 +22,29 @@ class board:
                 self.pbypos[tmp.index] = tmp
 
     def playMove(self, piece, move): #play a move
-        assert piece in self.pieces[piece.team]
-        assert move != piece.index
-        
-
+        # assert piece in self.pieces[piece.team]
+        # assert move != piece.index
         #assert move in piece.moves[0] or move in piece.moves[1], f"{move} {piece} {piece.moves}"
-        brd = [*self.state]
-        brd[piece.index] = '.'
-        brd[move] = piece.symbol
-        
+
+        self.state[piece.index] = '.'
+        self.state[move] = piece.symbol
         self.pbypos[piece.index] = None
         piece.move(move)
         self.pbypos[piece.index] = piece
-
-        self.state = ''.join(brd)
         self.player ^= 1
     
     def unplayMove(self, piece, move, fromPos, captured = None):
-        assert piece in self.pieces[piece.team], piece
-        assert move == piece.index
-        assert self.state[fromPos] == '.', "\n" + self.p2d() + "\n" + f"{piece} {move} {fromPos}"
-        brd = [*self.state]
-        brd[piece.index] = captured.symbol if captured else '.'
-        if captured: self.pieces[captured.team].add(captured)
-        brd[fromPos] = piece.symbol
+        # assert piece in self.pieces[piece.team], piece
+        # assert move == piece.index
+        # assert self.state[fromPos] == '.', "\n" + self.p2d() + "\n" + f"{piece} {move} {fromPos}"
         
-        self.pbypos[piece.index] = captured if captured else None
+        self.state[move] = captured.symbol if captured else '.'
+        if captured: self.pieces[captured.team].add(captured)
+        self.state[fromPos] = piece.symbol
+        self.pbypos[move] = captured if captured else None
         piece.unmove(fromPos)
         self.pbypos[piece.index] = piece
-        
-        self.state = ''.join(brd)
         self.player ^= 1
-    
-    def placeUpdate(self, move): #incrementally update moves for new state
-        #TODO: delayed team updates
-        #print(piece, piece.index, move)
-        #assert(piece in self.pieces[piece.team])
-        #assert(move == piece.index)
-        for p in (self.pieces[0] | self.pieces[1]):
-            if move in p.moves[0] or move in p.moves[1]:
-                p.findMoves(self.state)
-
-    def clearUpdate(self, pos):
-        for nxt in t.knightMoves[pos]:
-            if self.pbypos[nxt] != None and self.pbypos[nxt].type == 'N':
-                self.pbypos[nxt].findMoves(self.state)
-        #TODO: speed here
-        for strip in t.strips[pos]:
-            for nxt in strip:
-                if self.pbypos[nxt] != None and self.pbypos[nxt].type != 'N':
-                    self.pbypos[nxt].findMoves(self.state)
-                    break
         
     def evaluate(self):
         score = 0
@@ -99,12 +71,10 @@ class board:
                 score -= 3
             elif p.type == 'P':
                 score -= 1
-        
         return score
 
-
     def __str__(self): #2d board representation
-        out = [*self.state]
+        out = self.state.copy()
         for p in (self.pieces[0] | self.pieces[1]):
             a, b = p.findMoves(self.state)
             for mv in b:
@@ -127,7 +97,7 @@ class board:
         return('\n'.join([out[rs*8:rs*8+8]for rs in range(8)]))
     
     def p2d(self):
-        return('\n'.join([self.state[rs*8:rs*8+8]for rs in range(8)]))
+        return('\n'.join([''.join(self.state[rs*8:rs*8+8]) for rs in range(8)]))
     
 
 
