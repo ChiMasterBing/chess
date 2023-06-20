@@ -15,7 +15,7 @@ class piece:
         return self.hash
 
     def __str__(self):
-        return f"{self.type}:{t.letter[self.index%8]}{self.index//8}"
+        return f"{self.type}:{t.letter[self.index%8]}{8-self.index//8}"
     
     def __eq__(self, obj):
         return hash(self) == hash(obj)
@@ -76,6 +76,9 @@ class piece:
                 if board[pos] != '.':
                     t_team = (board[pos] >= 'a')
                     if self.team ^ t_team:
+                        # if pos == 39:
+                        #     print(t.pawnCaptures[self.team][self.index])
+                        #     exit()
                         captures.add(pos)
         self.moves = (captures, quiet)
         return self.moves

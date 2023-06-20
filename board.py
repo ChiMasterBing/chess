@@ -22,7 +22,10 @@ class board:
                 self.pbypos[tmp.index] = tmp
 
     def playMove(self, piece, move): #play a move
-        assert(piece in self.pieces[piece.team])
+        assert piece in self.pieces[piece.team]
+        assert move != piece.index
+        
+
         #assert move in piece.moves[0] or move in piece.moves[1], f"{move} {piece} {piece.moves}"
         brd = [*self.state]
         brd[piece.index] = '.'
@@ -35,14 +38,16 @@ class board:
         self.state = ''.join(brd)
         self.player ^= 1
     
-    def unplayMove(self, piece, move, fromPos):
+    def unplayMove(self, piece, move, fromPos, captured = None):
         assert piece in self.pieces[piece.team], piece
-        assert(move == piece.index)
+        assert move == piece.index
+        assert self.state[fromPos] == '.', "\n" + self.p2d() + "\n" + f"{piece} {move} {fromPos}"
         brd = [*self.state]
-        brd[piece.index] = '.'
+        brd[piece.index] = captured.symbol if captured else '.'
+        if captured: self.pieces[captured.team].add(captured)
         brd[fromPos] = piece.symbol
         
-        self.pbypos[piece.index] = None
+        self.pbypos[piece.index] = captured if captured else None
         piece.unmove(fromPos)
         self.pbypos[piece.index] = piece
         
@@ -69,6 +74,34 @@ class board:
                     self.pbypos[nxt].findMoves(self.state)
                     break
         
+    def evaluate(self):
+        score = 0
+        for p in self.pieces[self.player]:
+            if p.type == 'K':
+                score += 100
+            elif p.type == 'Q':
+                score += 9
+            elif p.type == 'R':
+                score += 5
+            elif p.type == 'B' or p.type == 'N':
+                score += 3
+            elif p.type == 'P':
+                score += 1
+
+        for p in self.pieces[self.player^1]:
+            if p.type == 'K':
+                score -= 100
+            elif p.type == 'Q':
+                score -= 9
+            elif p.type == 'R':
+                score -= 5
+            elif p.type == 'B' or p.type == 'N':
+                score -= 3
+            elif p.type == 'P':
+                score -= 1
+        
+        return score
+
 
     def __str__(self): #2d board representation
         out = [*self.state]
