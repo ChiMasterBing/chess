@@ -11,10 +11,14 @@ def PVS(brd, alpha, beta, depth, targetDepth):
         return score
     
     bestMove = None
-        
     iterate = [p for p in brd.pieces[brd.player]]
+    brd_hash = brd.brd_hash
+    mg, eg, gP = brd.mg.copy(), brd.eg.copy(), brd.gP
+
     for p in iterate:
-        pM = p.findMoves(brd.state)
+        
+        pM = p.findMoves(brd.state, brd.brd_hash)
+        
         for move in pM[0]: #captures
             fromPos = p.index
             
@@ -22,16 +26,12 @@ def PVS(brd, alpha, beta, depth, targetDepth):
             
             if captured.type == 'K': return 100
             
-            #brd.pieces[p.team ^ 1].remove(captured)
-            mg, eg, gP = brd.mg.copy(), brd.eg.copy(), brd.gP
             brd.playMove(p, move)
-            
             
             score = -PVS(brd, -beta, -alpha, depth+1, targetDepth)
             
-            brd.mg = mg
-            brd.eg = eg
-            brd.gP = gP
+            brd.mg, brd.eg, brd.gP = mg.copy(), eg.copy(), gP
+            brd.brd_hash = brd_hash
             brd.unplayMove(p, move, fromPos, captured)
             
             if score >= beta:
@@ -42,15 +42,13 @@ def PVS(brd, alpha, beta, depth, targetDepth):
 
         for move in pM[1]:
             fromPos = p.index
-            
-            mg, eg, gP = brd.mg.copy(), brd.eg.copy(), brd.gP
+
             brd.playMove(p, move)
 
             score = -PVS(brd, -beta, -alpha, depth+1, targetDepth)
 
-            brd.mg = mg
-            brd.eg = eg
-            brd.gP = gP
+            brd.mg, brd.eg, brd.gP = mg.copy(), eg.copy(), gP
+            brd.brd_hash = brd_hash
             brd.unplayMove(p, move, fromPos)
 
             if score >= beta:
@@ -60,7 +58,7 @@ def PVS(brd, alpha, beta, depth, targetDepth):
                 alpha = score
     
     if depth == 0:
-        print(alpha)
+        print("Score", alpha)
     return alpha if depth != 0 else bestMove
 
 

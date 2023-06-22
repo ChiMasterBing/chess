@@ -2,6 +2,7 @@
 import AI.search as search
 from AI.board import board
 import AI.tables as t
+import time
 
 def flipCase(c):
     if c == '.': return c
@@ -15,13 +16,21 @@ def getMove(state, player):
 
     print(f"Received Board as {player}\n{state}")
 
-    brd = board(state, player)
+    st = time.process_time()
 
-    move = search.PVS(brd, -999, 999, 0, 5)
+    for i in range(2, 10):
+        brd = board(state, player)
 
-    if not move:
-        print(f"[AI] Checkmate Detected")
-        exit()
+        print("Running depth", i)
+        move = search.PVS(brd, -999, 999, 0, i)
+
+        if not move:
+            print(f"[AI] Checkmate Detected")
+            exit()
+
+        if i == 5 or time.process_time() - st > 1:
+            print(f"Depth {i} in time {time.process_time() - st}")
+            break
 
     print(f"[AI] Move Raw: {move}")
     print(f"[AI] Selected Move: {move[0]} {t.letter[move[1]%8]}{8-move[1]//8}")

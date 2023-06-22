@@ -224,3 +224,7 @@ for p in ptypes:
 
         mg_table[0][p][i] = mg_copy[p][i ^ 56] + mg_value[p]
         eg_table[0][p][i] = eg_copy[p][i ^ 56] + eg_value[p]
+
+#.pPnNbBrRqQkK
+board_hash = [pow(13, i) for i in range(64)]
+board_key = {'.':0, 'p':1, 'P':2, 'n':3, 'N':4, 'b':5, 'B':6, 'r':7, 'R':8, 'q':9, 'Q':10, 'k':11, 'K':12}

@@ -4,7 +4,7 @@ import ChessGUI.ChessGUI_Example as GUI
 print("Finished Loading Imports")
 
 DEFAULT_BOARD = 'RNBQKBNRPPPPPPPP................................pppppppprnbqkbnr'
-PLAYERS = ['USER', 'AI']
+PLAYERS = ['AI', 'USER']
 
 victor, moves, boards = GUI.run_game(PLAYERS)
 # print()
