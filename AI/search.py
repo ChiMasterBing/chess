@@ -2,64 +2,134 @@ from AI.board import board
 import AI.tables as t
 
 #midgame search
-sum = [0]
+global sum
+sum = 0
+
+global IDDFS, PVDP
+IDDFS, PVDP = {}, {}
+
+def hashCutoffAB(brd, alpha, beta):
+    if (brd.brd_hash, brd.player) in PVDP:
+        flag, val  = PVDP[(brd.brd_hash, brd.player)]
+        if flag == 1: #precise
+            return (-2, alpha, beta)
+        elif flag == 2: 
+            alpha = max(alpha, val)
+        elif flag == 3:
+            beta = min(beta, val)
+        if alpha >= beta:
+            return (val, alpha, beta)
+    return (-2, alpha, beta)
+
+def scoutMoves(brd):
+    lst = []
+    stored = None
+    if (brd.brd_hash, brd.player) in IDDFS:
+        stored = IDDFS[(brd.brd_hash, brd.player)]
+
+    for p in brd.pieces[brd.player]:
+        if stored and hash(p) == hash(stored[0]):
+            lst.insert(0, p)
+        else:
+            lst.append(p)
+    
+    return lst
+
 
 def PVS(brd, alpha, beta, depth, targetDepth):
+    global sum, IDDFS, PVDP
+    
+    #val, alpha, beta = hashCutoffAB(brd, alpha, beta)
+    # if val != -2:
+    #     return val
+    if (brd.brd_hash, brd.player, alpha, beta) in PVDP:
+        return PVDP[(brd.brd_hash, brd.player, alpha, beta)]
+
     if depth == targetDepth:  
         score = brd.evaluate()
-        sum[0] += 1
+        sum += 1
         return score
     
+    iterate = scoutMoves(brd)
     bestMove = None
-    iterate = [p for p in brd.pieces[brd.player]]
     brd_hash = brd.brd_hash
     mg, eg, gP = brd.mg.copy(), brd.eg.copy(), brd.gP
+    first = True
 
     for p in iterate:
-        
+        fromPos = p.index
         pM = p.findMoves(brd.state, brd.brd_hash)
-        
+
         for move in pM[0]: #captures
-            fromPos = p.index
-            
             captured = brd.pbypos[move]
-            
             if captured.type == 'K': return 100
             
             brd.playMove(p, move)
             
-            score = -PVS(brd, -beta, -alpha, depth+1, targetDepth)
+            if not first:
+                score = -PVS(brd, -alpha-1, -alpha, depth+1, targetDepth)
+                if alpha < score < beta:
+                    cur = -PVS(brd, -beta, -cur, depth+1, targetDepth)
+                first = False
+            else:
+                score = -PVS(brd, -beta, -alpha, depth+1, targetDepth)
             
             brd.mg, brd.eg, brd.gP = mg.copy(), eg.copy(), gP
             brd.brd_hash = brd_hash
             brd.unplayMove(p, move, fromPos, captured)
             
             if score >= beta:
+                #PVDP[(brd.brd_hash, brd.player)] = (2, score)
+                PVDP[(brd.brd_hash, brd.player, alpha, beta)] = score
+                IDDFS[(brd.brd_hash, brd.player)] = (p, move)
                 return score
             elif score > alpha:
                 bestMove = (p, move)
                 alpha = score
 
         for move in pM[1]:
-            fromPos = p.index
-
             brd.playMove(p, move)
 
-            score = -PVS(brd, -beta, -alpha, depth+1, targetDepth)
+            if not first:
+                score = -PVS(brd, -alpha-1, -alpha, depth+1, targetDepth)
+                if alpha < score < beta:
+                    cur = -PVS(brd, -beta, -cur, depth+1, targetDepth)
+                first = False
+            else:
+                score = -PVS(brd, -beta, -alpha, depth+1, targetDepth)
 
             brd.mg, brd.eg, brd.gP = mg.copy(), eg.copy(), gP
             brd.brd_hash = brd_hash
             brd.unplayMove(p, move, fromPos)
 
             if score >= beta:
+                #PVDP[(brd.brd_hash, brd.player)] = (2, score)
+                PVDP[(brd.brd_hash, brd.player, alpha, beta)] = score
+                IDDFS[(brd.brd_hash, brd.player)] = (p, move)
                 return score
             elif score > alpha:
                 bestMove = (p, move)
                 alpha = score
-    
+        
+
+    PVDP[(brd.brd_hash, brd.player, alpha, beta)] = score #(flag, score)
+    IDDFS[(brd.brd_hash, brd.player)] = bestMove
+
     if depth == 0:
+        print("Nodes", sum)
         print("Score", alpha)
+        sum = 0
+        IDDFS, PVDP = {}, {}
+
     return alpha if depth != 0 else bestMove
+
+
+
+
+
+
+
+
 
 
 

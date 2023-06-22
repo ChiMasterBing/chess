@@ -17,12 +17,13 @@ def getMove(state, player):
     print(f"Received Board as {player}\n{state}")
 
     st = time.process_time()
-
+    brd = board(state, player) #move this outside
     for i in range(2, 10):
-        brd = board(state, player)
-
+        
         print("Running depth", i)
         move = search.PVS(brd, -999, 999, 0, i)
+        
+        #brd.reform()
 
         if not move:
             print(f"[AI] Checkmate Detected")
@@ -35,6 +36,7 @@ def getMove(state, player):
     print(f"[AI] Move Raw: {move}")
     print(f"[AI] Selected Move: {move[0]} {t.letter[move[1]%8]}{8-move[1]//8}")
     #format move according to GUI specification
+    
     return f"{str(move[0])[2:]}{t.letter[move[1]%8]}{8-move[1]//8}"
 
 if __name__ == '__main__':

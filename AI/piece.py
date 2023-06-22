@@ -1,14 +1,8 @@
 import AI.tables as t
-
+import AI.mem as mem
 class piece:
-    type = None
-    symbol = None
-    index = None
-    team = None #white = 1, black = 0
-    id = None
-    promoted = False
-    moves = None
-    moveDP = None
+    type, symbol, index, team, id, promoted, moves, moveDP = (None for _ in range(8))
+    #white = 1, black = 0
     def __init__(self, type, i):
         self.type, self.index, self.symbol = type.upper(), i, type
         self.team = 1 if type >= 'a' else 0
@@ -25,17 +19,19 @@ class piece:
     def __eq__(self, obj):
         return hash(self) == hash(obj)
 
+    def reform(self):
+        self.moves = set()
+        self.moveDP = {}
+
     def move(self, move, turn): #DOES NOT UPDATE ITS MOVES
         #assert move in self.moves[0] or move in self.moves[1], move
         self.index = move
         if self.type == 'P':
             if self.team == 1 and self.index//8 == 0:
-                #print("bogus")
                 self.promoted = turn
                 self.symbol = 'q'
                 self.type = 'Q'
             elif self.team == 0 and self.index//8 == 7:
-                #print("bingus")
                 self.promoted = turn
                 self.symbol = 'Q'
                 self.type == 'Q'
@@ -48,7 +44,11 @@ class piece:
             self.type = 'P'
 
     def findMoves(self, board, brd_hash):
-        if brd_hash in self.moveDP:
+        # if (moves:=mem.grabMove(self.symbol, self.index, brd_hash)) != None:
+        #     print("hit")
+        #     self.moves = moves
+        #     return moves
+        if brd_hash in self.moveDP: #move the hash to external class
             self.moves = self.moveDP[brd_hash]
             return self.moves
         
@@ -104,8 +104,9 @@ class piece:
                         #     exit()
                         captures.add(pos)
         self.moves = (captures, quiet)
-        
+
         self.moveDP[brd_hash] = (captures, quiet)
+        #mem.storeMove(self.symbol, self.index, brd_hash, self.moves)
 
         return self.moves
 

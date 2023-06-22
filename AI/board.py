@@ -3,22 +3,50 @@ import AI.tables as t
 #use rudimentry methods - could be optimized for bitboards later
 class board:
     state = 'RNBQKBNRPPPPPPPP................................pppppppprnbqkbnr'
-    pieces = [set(), set()]
-    pbypos = [None for _ in range(64)]
+    pieces = None
+    pbypos = None
     player = 1 #white starts
     evaluation = 0
     turns = 1
-    mg, eg, gP = [0, 0], [0, 0], 0
+    mg, eg, gP = None, None, 0
     brd_hash = 0
 
     #initialize the board, default position given
     def __init__(self, s = state, p = 1):
         self.pieces = [set(), set()]
+        self.pbypos = [None for _ in range(64)]
         self.state = [*s]
         self.player = p
+        self.mg, self.eg = [0, 0], [0, 0]
         self.hard_hash()
         self.setPieces()
         self.hard_evaluate()
+
+    def reform(self):
+        print(self.p2d())
+        self.hard_hash()
+        nxtPieces = [set(), set()]
+        for p in (self.pieces[0] | self.pieces[1]):
+            p.reform()
+            # p.findMoves(self.state, self.brd_hash)
+            nxtPieces[p.team].add(p)
+
+        for p in self.pieces[0]:
+            print(p, end = " ")
+        print()
+        for p in self.pieces[1]:
+            print(p, end = " ")
+        
+        print("\n-------------------")
+        for p in nxtPieces[0]:
+            print(p, end = " ")
+        print()
+        for p in nxtPieces[1]:
+            print(p, end = " ")
+        print()
+        self.pieces = nxtPieces
+        self.hard_evaluate()
+        
     
     def setPieces(self): #fills the pieces set
         for i, p in enumerate(self.state):
@@ -32,7 +60,6 @@ class board:
         # assert piece in self.pieces[piece.team]
         # assert move != piece.index
         # assert move in piece.moves[0] or move in piece.moves[1], f"{move} {piece} {piece.moves}"
-        
         if self.state[move] != '.':
             #capture eval
             self.mg[piece.team ^ 1] -= t.mg_table[piece.team ^ 1][self.state[move].upper()][move]
@@ -58,7 +85,6 @@ class board:
         piece.move(move, self.turns)
         self.pbypos[piece.index] = piece
         self.player ^= 1
-
         self.turns += 1
 
     def unplayMove(self, piece, move, fromPos, captured = None):
